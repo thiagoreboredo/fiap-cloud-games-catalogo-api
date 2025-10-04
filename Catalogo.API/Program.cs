@@ -1,6 +1,7 @@
 using Application.Helper;
 using Application.Mapping;
 using Application.Services;
+using Azure.Messaging.ServiceBus;
 using Domain.Repository;
 using FIAP_Cloud_Games.Configurations;
 using FIAP_Cloud_Games.Endpoints;
@@ -27,6 +28,12 @@ builder.Services.AddScoped<IJogoRepository, JogoRepository>();
 builder.Services.AddScoped<JogoService>();
 builder.Services.AddTransient<ICorrelationIdGenerator, CorrelationIdGenerator>();
 builder.Services.AddTransient(typeof(IAppLogger<>), typeof(AppLogger<>));
+#endregion
+
+#region Azure Service Bus
+builder.Services.AddSingleton((s) => {
+    return new ServiceBusClient(builder.Configuration["ServiceBus:ConnectionString"]);
+});
 #endregion
 
 #region Swagger
