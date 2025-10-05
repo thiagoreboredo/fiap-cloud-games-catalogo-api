@@ -1,0 +1,64 @@
+trigger:
+- master # Gatilho para iniciar o pipeline em commits na branch master
+
+pool: 'Default'
+
+variables:
+  # --- Variáveis Específicas deste Microsserviço ---
+  imageRepository: 'fiap-cloud-games-catalogo-api'
+  containerAppName: 'catalogo-api'
+  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  
+  # --- Variáveis Gerais ---
+  tag: '$(Build.BuildId)'
+  acrServiceConnection: 'ConexaoAzureContainerRegistry'
+  azureSubscription: 'Acimel - PROD(8ad60e49-3122-49d8-b64e-1e7f12380229)'
+  resourceGroup: 'FIAP'
+  containerAppEnvironment: 'managedEnvironment-FIAP-8860'
+  acrLoginServer: 'acimel.azurecr.io'
+
+stages:
+- stage: Build
+  displayName: 'Build da Imagem Docker'
+  jobs:
+  - job: BuildJob
+    displayName: 'Build'
+    steps:
+    - task: Docker@2
+      displayName: 'Build da Imagem'
+      inputs:
+        command: 'build'
+        containerRegistry: '$(acrServiceConnection)'
+        repository: '$(imageRepository)'
+        dockerfile: '$(dockerfilePath)'
+        tags: '$(tag)'
+
+- stage: Push
+  displayName: 'Push da Imagem para o Azure Container Registry'
+  dependsOn: Build
+  jobs:
+  - job: PushJob
+    displayName: 'Push'
+    steps:
+    - task: Docker@2
+      displayName: 'Push da Imagem'
+      inputs:
+        command: 'push'
+        containerRegistry: '$(acrServiceConnection)'
+        repository: '$(imageRepository)'
+        tags: '$(tag)'
+
+- stage: Deploy
+  displayName: 'Deploy no Azure Container App'
+  dependsOn: Push
+  jobs:
+  - job: DeployJob
+    displayName: 'Deploy'
+    steps:
+    - task: AzureContainerApps@1
+      displayName: 'Deploy da Imagem no Azure Container App'
+      inputs:
+        azureSubscription: '$(azureSubscription)'
+        resourceGroup: '$(resourceGroup)'
+        containerAppName: '$(containerAppName)'
+        imageToDeploy: '$(acrLoginServer)/$(imageRepository):$(tag)'
