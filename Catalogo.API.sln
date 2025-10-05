@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalogo.API", "Catalogo.API.csproj", "{00A4BD72-3D0A-4C77-BAE0-3D4F0DC59AF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalogo.API", "Catalogo.API\Catalogo.API.csproj", "{00A4BD72-3D0A-4C77-BAE0-3D4F0DC59AF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "..\Infrastructure\Infrastructure.csproj", "{E3A0B8A9-FC85-4E70-979E-A5CB9CE8303D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{E3A0B8A9-FC85-4E70-979E-A5CB9CE8303D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "..\Domain\Domain.csproj", "{254EB622-F2D8-4AB1-B5D6-06B05B03887C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{254EB622-F2D8-4AB1-B5D6-06B05B03887C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalogo.APITest", "..\Catalogo.APITest\Catalogo.APITest.csproj", "{15440285-54F1-4F16-824B-5CD9284BCE7D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalogo.APITest", "Catalogo.APITest\Catalogo.APITest.csproj", "{15440285-54F1-4F16-824B-5CD9284BCE7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "..\Application\Application.csproj", "{376D70DF-B1EE-4795-B7A5-56200F348C6F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{376D70DF-B1EE-4795-B7A5-56200F348C6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
