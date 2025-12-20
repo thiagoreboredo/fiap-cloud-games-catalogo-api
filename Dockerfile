@@ -8,6 +8,7 @@ COPY ["Catalogo.API/Catalogo.API.csproj", "Catalogo.API/"]
 COPY ["Application/Application.csproj", "Application/"]
 COPY ["Domain/Domain.csproj", "Domain/"]
 COPY ["Infrastructure/Infrastructure.csproj", "Infrastructure/"]
+COPY ["Catalogo.APITest/Catalogo.APITest.csproj", "Catalogo.APITest/"]
 RUN dotnet restore "Catalogo.API.sln"
 
 # Publicação do binário
