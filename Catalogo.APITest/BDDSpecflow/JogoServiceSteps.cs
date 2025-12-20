@@ -3,11 +3,10 @@ using Application.Exceptions;
 using Application.Helper;
 using Application.Services;
 using AutoMapper;
-using Azure.Messaging.ServiceBus;
 using Domain.Entity;
 using Domain.Entity.Enum;
 using Domain.Repository;
-using Microsoft.Extensions.Configuration;
+using MassTransit;
 using Moq;
 using TechTalk.SpecFlow;
 
@@ -18,35 +17,21 @@ public class JogoServiceSteps
     private readonly Mock<IJogoRepository> _jogoRepositoryMock = new();
     private readonly Mock<IMapper> _mapperMock = new();
     private readonly Mock<IAppLogger<JogoService>> _appLoggerMock = new();
-
-    // --- NOVOS MOCKS ---
-    private readonly Mock<IConfiguration> _configurationMock = new();
-    private readonly Mock<ServiceBusClient> _serviceBusClientMock = new();
-    private readonly Mock<ServiceBusSender> _serviceBusSenderMock = new();
-    // --- FIM DOS NOVOS MOCKS ---
+    private readonly Mock<IPublishEndpoint> _publishEndpointMock = new();
 
     private JogoService _service;
     private JogoDTO _jogoDto;
     private Exception _exception;
-    private Jogo _jogo; // Adicionado para guardar a entidade Jogo
+    private Jogo _jogo;
 
     public JogoServiceSteps(ScenarioContext context)
     {
         _context = context;
-
-        // --- SETUP DOS NOVOS MOCKS ---
-        _configurationMock.Setup(c => c["ServiceBus:TopicName"]).Returns("fake-topic");
-        _serviceBusSenderMock = new Mock<ServiceBusSender>();
-        _serviceBusClientMock.Setup(c => c.CreateSender(It.IsAny<string>())).Returns(_serviceBusSenderMock.Object);
-        // --- FIM DO SETUP ---
-
-        // --- ATUALIZAÇÃO DO CONSTRUTOR DO SERVIÇO ---
         _service = new JogoService(
             _jogoRepositoryMock.Object,
             _mapperMock.Object,
             _appLoggerMock.Object,
-            _serviceBusClientMock.Object,
-            _configurationMock.Object);
+            _publishEndpointMock.Object);
     }
 
     [Given(@"um jogo com nome ""(.*)"", empresa ""(.*)"", preco (.*), classificacao (.*) e genero (.*)")]
@@ -100,13 +85,13 @@ public class JogoServiceSteps
         _jogoRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Jogo>()), Times.Once);
     }
 
-    // --- NOVA VERIFICAÇÃO ---
-    [Then(@"uma mensagem deve ser enviada ao Service Bus")]
-    public void ThenUmaMensagemDeveSerEnviadaAoServiceBus()
+    // --- NOVA VERIFICAÇÃO DE MENSAGERIA ---
+    [Then(@"uma mensagem deve ser enviada ao RabbitMQ")]
+    public void ThenUmaMensagemDeveSerEnviadaAoRabbitMQ()
     {
-        _serviceBusSenderMock.Verify(s => s.SendMessageAsync(It.IsAny<ServiceBusMessage>(), It.IsAny<CancellationToken>()), Times.Once);
+        // Verifica se o método Publish do MassTransit foi chamado com o evento correto
+        _publishEndpointMock.Verify(p => p.Publish(It.IsAny<JogoCriadoEvent>(), It.IsAny<CancellationToken>()), Times.Once);
     }
-    // --- FIM DA NOVA VERIFICAÇÃO ---
 
     [Then(@"uma excecao NotFoundException deve ser lancada")]
     public void ThenExcecaoNotFoundDeveSerLancada()
