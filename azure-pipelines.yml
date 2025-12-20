@@ -12,7 +12,7 @@ variables:
   # --- Variáveis Gerais ---
   tag: '$(Build.BuildId)'
   acrServiceConnection: 'ConexaoAzureContainerRegistry'
-  azureSubscription: 'Acimel - PROD(8ad60e49-3122-49d8-b64e-1e7f12380229)'
+  azureSubscription: 'AzureSubscriptionConnection'
   resourceGroup: 'FIAP'
   containerAppEnvironment: 'managedEnvironment-FIAP-8860'
   acrLoginServer: 'acimel.azurecr.io'
