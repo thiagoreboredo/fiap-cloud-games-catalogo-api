@@ -1,45 +1,57 @@
-# Microsserviço de Catálogo - FIAP Cloud Games 🚀
+# FIAP Cloud Games - Catálogo API 🎮
 
-Este repositório contém o código-fonte do **Microsserviço de Catálogo**, parte da arquitetura do projeto FIAP Cloud Games da Pós-Graduação em Arquitetura de Sistemas .NET com Azure.
+Este microsserviço é o componente central da plataforma **FIAP Cloud Games (FCG)**, responsável pela gestão do inventário de jogos. Ele atua como o produtor de eventos principal, garantindo que todas as alterações no catálogo sejam propagadas de forma assíncrona para o restante ecossistema.
 
-Este serviço é responsável por gerenciar todas as operações relacionadas ao catálogo de jogos da plataforma, incluindo o CRUD (Create, Read, Update, Delete) de jogos e a gestão de promoções.
+Na **Fase 4**, a API evoluiu para uma arquitetura orientada a eventos (*Event-Driven*) e foi totalmente preparada para a orquestração em larga escala com **Kubernetes (AKS)**.
+
+## 🚀 Evoluções Técnicas (Fase 4)
+
+Implementámos os requisitos mais avançados de arquitetura distribuída e escalabilidade:
+
+- **Arquitetura Event-Driven & Event Sourcing**: A API agora implementa o padrão de *Event Sourcing* para mudanças de estado. Cada criação ou atualização de um jogo dispara um `JogoCriadoEvent`, garantindo a integridade e rastreabilidade dos dados em todo o sistema.
+- **Mensageria com RabbitMQ**: Substituição do Azure Service Bus pelo **RabbitMQ** (via **MassTransit**), permitindo uma infraestrutura de mensageria resiliente e desacoplada dentro do cluster Kubernetes.
+- **Otimização Docker (Hardening)**: Migração para a imagem base `aspnet:8.0-bookworm-slim`, focando na redução da superfície de ataque e na leveza do contentor.
+- **Segurança de Execução**: Implementação de boas práticas de segurança com a execução do processo através de utilizador não-root (`USER $APP_UID`).
+- **Kubernetes Nativo**: Preparação de manifestos para deploy no **Azure Kubernetes Service (AKS)** com suporte nativo a **HPA (Horizontal Pod Autoscaler)**.
+- **Observabilidade (APM)**: Instrumentação profunda com **New Relic**, monitorizando o throughput de mensagens e a performance das transações de base de dados.
+
+## 🛠 Tecnologias Utilizadas
+
+- **Runtime**: .NET 8 (C#)
+- **Mensageria**: RabbitMQ com MassTransit
+- **Persistência**: Entity Framework Core com SQL Server
+- **Conteinerização**: Docker (Multi-stage build)
+- **Monitoramento**: New Relic APM
+- **Orquestração**: Kubernetes (AKS)
+
+## 🐳 Execução via Docker (Local)
+
+Para testar o catálogo localmente com suporte a eventos, configure as variáveis do RabbitMQ e do Banco de Dados:
+
+```bash
+# Build da imagem otimizada
+docker build -t fiap-cloud-games-catalogo-api .
+
+# Execução (Exemplo de variáveis)
+docker run -p 8080:8080 \
+  -e ConnectionStrings__DefaultConnection="Sua-String" \
+  -e RabbitMQ__Host="localhost" \
+  fiap-cloud-games-catalogo-api
+```
+
+## ⚓ Kubernetes e Escalabilidade
+
+Este microsserviço foi desenhado para suportar alta carga no cluster AKS:
+- **Liveness & Readiness Probes**: O Kubernetes monitoriza a saúde da API e a sua prontidão para receber tráfego, garantindo disponibilidade contínua.
+- **HPA (Horizontal Pod Autoscaler)**: Configurado para escalar réplicas automaticamente com base no consumo de CPU e memória, permitindo que o catálogo suporte picos de tráfego sem degradação.
+
+## 📈 Monitoramento (APM)
+
+Através do **New Relic**, monitorizamos:
+- Tempo de resposta dos endpoints de gestão de jogos.
+- Taxa de sucesso na publicação de eventos no RabbitMQ.
+- Saúde da conexão com o SQL Server e métricas de infraestrutura dos Pods.
 
 ---
-
-### 🎯 Responsabilidades do Serviço
-
--   **Gerenciamento de Jogos (CRUD)**: Fornece endpoints para criar, listar, atualizar e deletar jogos no catálogo. Essas operações são restritas a usuários com perfil de "Administrador".
--   **Consulta ao Catálogo**: Permite que qualquer usuário autenticado liste e visualize os jogos disponíveis.
--   **Gerenciamento de Promoções**: (Futuramente) Irá gerenciar a criação e associação de promoções aos jogos.
--   **Publicação de Eventos**: Notifica outros serviços (via mensageria) quando um jogo é criado ou atualizado, para fins de indexação na busca.
-
----
-
-### 🛠️ Tecnologias Utilizadas
-
--   **.NET 8**: Plataforma de desenvolvimento.
--   **ASP.NET Core (Minimal API)**: Framework para construção da API.
--   **Entity Framework Core**: ORM para acesso a dados.
--   **PostgreSQL**: Banco de dados relacional.
--   **JWT (JSON Web Tokens)**: Para autorização de endpoints.
--   **xUnit**: Framework para testes de unidade.
--   **Docker**: Para conteinerização da aplicação.
--   **New Relic**: Para monitoramento e observabilidade (APM).
-
----
-
-### 📂 Estrutura do Projeto
-
--   **Domain**: Contém as entidades `Jogo`, `Promocao` e as regras de negócio do catálogo.
--   **Application**: Orquestra os casos de uso (Services e DTOs).
--   **Infrastructure**: Implementa a persistência de dados com EF Core e o `DbContext`.
--   **Catalogo.API**: Expõe os endpoints RESTful (`/jogo`).
--   **FIAP-Cloud-GamesTest**: Contém os testes de unidade para o serviço.
-
----
-
-### ▶️ Como Executar
-
-1.  **Pré-requisitos**: .NET 8 SDK e Docker.
-2.  **Configuração**: Ajuste a `ConnectionString` no arquivo `appsettings.Development.json` para apontar para o seu banco de dados PostgreSQL.
-3.  **Execução**: Rode o projeto `Catalogo.API` a partir da sua IDE ou via linha de comando com `dotnet run`.
+**FIAP - Arquitetura de Sistemas .NET com Azure**
+*Grupo 142*
