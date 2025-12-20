@@ -9,6 +9,7 @@ using FIAP_Cloud_Games.Middleware;
 using Infrastructure.Logging;
 using Infrastructure.Middleware;
 using Infrastructure.Repository;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -22,6 +23,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+builder.Services.AddMassTransit(x =>
+{
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("rabbitmq-service", "/", h => {
+            h.Username("guest");
+            h.Password("guest");
+        });
+    });
+});
 
 #region injeção de dependência
 builder.Services.AddScoped<IJogoRepository, JogoRepository>();
