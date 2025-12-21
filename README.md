@@ -51,7 +51,3 @@ Através do **New Relic**, monitorizamos:
 - Tempo de resposta dos endpoints de gestão de jogos.
 - Taxa de sucesso na publicação de eventos no RabbitMQ.
 - Saúde da conexão com o SQL Server e métricas de infraestrutura dos Pods.
-
----
-**FIAP - Arquitetura de Sistemas .NET com Azure**
-*Grupo 142*
