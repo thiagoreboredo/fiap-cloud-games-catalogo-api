@@ -15,8 +15,8 @@ namespace Application.Services
         public string Name { get; set; }
         public string Company { get; set; }
         public double Price { get; set; }
-        public string Genre { get; set; }
-        public string Rating { get; set; }
+        public int Genre { get; set; }
+        public int Rating { get; set; }
     }
 
     public class JogoService
@@ -49,8 +49,8 @@ namespace Application.Services
                 Name = jogo.Name,
                 Company = jogo.Company,
                 Price = jogo.Price,
-                Genre = jogo.Genre.ToString(),
-                Rating = jogo.Rating.ToString()
+                Genre = (int)jogo.Genre,
+                Rating = (int)jogo.Rating
             });
 
             _logger.LogInformation($"Jogo {jogo.Id} criado e evento publicado no RabbitMQ.");
@@ -74,8 +74,8 @@ namespace Application.Services
                 Name = jogo.Name,
                 Company = jogo.Company,
                 Price = jogo.Price,
-                Genre = jogo.Genre.ToString(),
-                Rating = jogo.Rating.ToString()
+                Genre = (int)jogo.Genre,
+                Rating = (int)jogo.Rating
             });
 
             _logger.LogInformation($"Jogo {id} atualizado e evento de mudança enviado.");
